@@ -1,4 +1,5 @@
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
+import generatePDF from '../utils/generatePDF';
 
 const ImageUploader = () => {
 
@@ -39,6 +40,10 @@ const ImageUploader = () => {
 
     const handleDelete = (index) => {
         setImages((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const handleGeneratePDF = () => {
+        generatePDF(images);
     };
 
 
@@ -99,6 +104,7 @@ const ImageUploader = () => {
                     </button>
                     <button
                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                        onClick={handleGeneratePDF}
                     >
                         Generate PDF
                     </button>
