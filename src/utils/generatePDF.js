@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 const generatePDF = async (images) => {
     if (!images || images.length === 0) return;
 
-    const pdf = new jsPDF();
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'in', format: [4, 2] });
 
     for (let i = 0; i < images.length; i++) {
         const img = images[i];

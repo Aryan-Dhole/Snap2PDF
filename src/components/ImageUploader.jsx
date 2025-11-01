@@ -51,8 +51,8 @@ const ImageUploader = () => {
 
 
     return (
-        <div className='flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4'>
-            <h1 className='text-3xl font-bold mb-20'>Span2pdf — images to PDF</h1>
+        <div className='flex flex-col items-center min-h-screen bg-gray-900 text-white p-4'>
+            <h1 className='text-3xl font-bold mt-15 mb-40'>Span2pdf — images to PDF</h1>
 
             <div
                 onDrop={handleDrop}
@@ -66,11 +66,19 @@ const ImageUploader = () => {
                     accept='image/*'
                     multiple
                     onChange={handleFileChange}
-                    className='mb-4 cursor-pointer bg-gray-500 rounded-2xl px-4 py-2 pl-10  ml-12'
+                    className='mb-4 cursor-pointer hover:scale-105 transform duration-200 bg-gray-500 rounded-2xl px-4 py-2 pl-10  ml-12'
                 />
 
                 {images.length > 0 && (
-                    <div className='grid-cols-3 gap-3 mt-4'>
+                    <div className={
+                        `grid gap-3 mt-4 ` +
+                        (images.length === 1
+                            ? 'grid-cols-1 place-items-center'
+                            : images.length === 2
+                                ? 'grid-cols-2'
+                                : 'grid-cols-3')
+                    }
+                    >
                         {images.map((img, i) => (
                             <div key={i} className="relative group">
                                 <img
@@ -78,7 +86,7 @@ const ImageUploader = () => {
                                     alt={`upload-${i}`}
                                     draggable={false}
                                     onDragStart={(e) => e.preventDefault()}
-                                    className="w-full h-24 object-cover rounded-lg border border-gray-700"
+                                    className="w-full h-24 object-cover rounded-lg border hover:scale-105 transition-transform duration-300 border-gray-700"
                                 />
                                 <button
                                     onClick={() => handleDelete(i)}
