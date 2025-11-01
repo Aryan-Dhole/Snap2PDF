@@ -25,8 +25,8 @@ const generatePDF = async (images) => {
 
         const w = imageEl.width * ratio;
         const h = imageEl.height * ratio;
-        const x = (pageWidth - w) / 2;
-        const y = (pageHeight - h) / 2;
+        const x = (pageWidth - w) / 3;
+        const y = (pageHeight - h) / 3;
 
         pdf.addImage(imgData, "JPEG", x, y, w, h);
 

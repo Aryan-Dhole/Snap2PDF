@@ -17,14 +17,12 @@ const ImageUploader = () => {
     const handleDrop = (e) => {
         e.preventDefault();
 
-        // Get only image files (ignore random dragged items)
         const files = Array.from(e.dataTransfer.files).filter((f) =>
             f.type.startsWith("image/")
         );
 
         if (files.length === 0) return;
 
-        // Prevent duplicate file names being added
         const newFiles = files.filter(
             (file) => !images.some((img) => img.file.name === file.name)
         );
@@ -34,7 +32,6 @@ const ImageUploader = () => {
             preview: URL.createObjectURL(file),
         }));
 
-        // Add new ones on top of existing
         setImages((prev) => [...prev, ...updated]);
     };
 
