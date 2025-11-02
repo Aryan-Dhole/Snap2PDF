@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import generatePDF from '../utils/generatePDF';
+import { DragDropContext, Droppable, } from '@hello-pangea/dnd';
+import { Draggable } from '@hello-pangea/dnd';
 
 const ImageUploader = () => {
 
@@ -70,52 +72,82 @@ const ImageUploader = () => {
                 />
 
                 {images.length > 0 && (
-                    <div className={
-                        `grid gap-3 mt-4 ` +
-                        (images.length === 1
-                            ? 'grid-cols-1 place-items-center'
-                            : images.length === 2
-                                ? 'grid-cols-2'
-                                : 'grid-cols-3')
-                    }
+                    <DragDropContext
+                        onDragEnd={(result) => {
+                            if (!result.destination) return;
+                            const reodered = Array.from(images)
+                            const [moved] = reodered.splice(result.source.index, 1)
+                            reodered.splice(result.destination.index, 0, moved);
+                            setImages(reodered)
+                        }}
                     >
-                        {images.map((img, i) => (
-                            <div key={i} className="relative group">
-                                <img
-                                    src={img.preview}
-                                    alt={`upload-${i}`}
-                                    draggable={false}
-                                    onDragStart={(e) => e.preventDefault()}
-                                    className="w-full h-24 object-cover rounded-lg border hover:scale-105 transition-transform duration-300 border-gray-700"
-                                />
-                                <button
-                                    onClick={() => handleDelete(i)}
-                                    className="absolute top-1 right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md opacity-80 hover:opacity-100 transition"
-                                >
-                                    ✕
-                                </button>
-                            </div>
+                        <Droppable
+                            droppableId='imageGrid' direction='horizontal'
+                        >{(provided) => (<div {...provided.droppableProps}
+                            ref={provided.innerRef} className={
+                                `grid gap-3 mt-4 ` +
+                                (images.length === 1
+                                    ? 'grid-cols-1 place-items-center'
+                                    : images.length === 2
+                                        ? 'grid-cols-2'
+                                        : 'grid-cols-3')
+                            }
+                        >
+                            {images.map((img, i) => (
+                                <Draggable key={i} draggableId={i.toString()} index={i}>
+                                    {(provided) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            className='relative group'
+                                        >
+                                            <img
+                                                src={img.preview}
+                                                alt={`upload-${i}`}
+                                                draggable={false}
+                                                onDragStart={(e) => e.preventDefault()}
+                                                className="w-full h-24 object-cover rounded-lg border hover:scale-105 transition-transform duration-300 border-gray-700"
+                                            />
+                                            <button
+                                                onClick={() => handleDelete(i)}
+                                                className="absolute top-1 right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md opacity-80 hover:opacity-100 transition"
+                                            >
+                                                ✕
+                                            </button>
 
-                        ))}
-                    </div>
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+
+                            {provided.placeholder}
+
+                        </div>
+                        )}
+                        </Droppable>
+                    </DragDropContext>
                 )}
             </div>
-            {images.length > 0 && (
-                <div className='mt-6 flex gap-2'>
-                    <button
-                        onClick={clearImages}
-                        className='px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg'>
-                        Clear All
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
-                        onClick={handleGeneratePDF}
-                    >
-                        Generate PDF
-                    </button>
-                </div>
-            )}
-        </div>
+            {
+                images.length > 0 && (
+
+                    <div className='mt-6 flex gap-2'>
+                        <button
+                            onClick={clearImages}
+                            className='px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg'>
+                            Clear All
+                        </button>
+                        <button
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                            onClick={handleGeneratePDF}
+                        >
+                            Generate PDF
+                        </button>
+                    </div>
+                )
+            }
+        </div >
     )
 }
 
