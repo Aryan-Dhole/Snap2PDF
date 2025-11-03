@@ -2,10 +2,24 @@ import React, { useState } from 'react';
 import generatePDF from '../utils/generatePDF';
 import { DragDropContext, Droppable, } from '@hello-pangea/dnd';
 import { Draggable } from '@hello-pangea/dnd';
+import ImagePreviewModal from './ImagePreviewModal';
 
 const ImageUploader = () => {
 
     const [images, setImages] = useState([]);
+    const [previewModal, setPreviewModal] = useState({ open: false, index: null });
+
+    const openPreview = (i) => setPreviewModal({ open: true, index: i });
+    const closePreview = () => setPreviewModal({ open: false, index: null });
+
+    const handleCropComplete = (croppedUrl) => {
+        setImages((prev) =>
+            prev.map((img, i) =>
+                i === previewModal.index ? { ...img, preview: croppedUrl } : img
+            )
+        );
+    };
+
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
@@ -105,6 +119,7 @@ const ImageUploader = () => {
                                             <img
                                                 src={img.preview}
                                                 alt={`upload-${i}`}
+                                                onClick={() => openPreview(i)}
                                                 draggable={false}
                                                 onDragStart={(e) => e.preventDefault()}
                                                 className="w-full h-24 object-cover rounded-lg border hover:scale-105 transition-transform duration-300 border-gray-700"
@@ -147,6 +162,14 @@ const ImageUploader = () => {
                     </div>
                 )
             }
+            {previewModal.open && (
+                <ImagePreviewModal
+                    isOpen={previewModal.open}
+                    image={images[previewModal.index]?.preview}
+                    onClose={closePreview}
+                    onCropComplete={handleCropComplete}
+                />
+            )}
         </div >
     )
 }
